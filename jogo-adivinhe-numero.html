@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Adivinhação com Numeros</title>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', Verdana, sans-serif;
+        }
+        .resultado {
+            color: white;
+            padding: 5px 10px;
+        }
+        .palpiteCampo, .palpiteVerif, button {
+            padding: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        Jogo de Adivinhar o Número.
+    </h1>
+    <p>
+        Nós escolheremos um número secreto aleatório entre 1 e 100 e você precisará adivinhar o número em 10 tentativas ou menos. Boa sorte! So lembrando que avisaremos quando o número for maior ou menor que o número secreto e diremos também os palpites anteriores para que você não esqueça, belé? Combinado? Então vamos lá!
+    </p>
+
+    <label for="texto">Dê um palpite: </label>
+    <input type="text" id="palpiteCampo" class="palpiteCampo" placeholder="Insira um número">
+    <input type="submit" class="palpiteVerif" value="Verificar">
+
+    <div class="resultParam">
+        <p class="palpites"></p>
+        <p class="resultado"></p>
+        <p class="menorOuMaior"></p>
+    </div>
+
+    <script>
+        let randNumero = Math.floor(Math.random() * 100) + 1;
+
+        const numPalpites = document.querySelector('.palpites');
+        const resultado = document.querySelector('.resultado');
+        const menorOuMaior = document.querySelector('.menorOuMaior');
+
+        const palpiteVerif = document.querySelector('.palpiteVerif');
+        const palpiteCampo = document.querySelector('.palpiteCampo');
+
+        let contagem = 1;
+        let resetBotao;
+
+        function checarPalpite(){
+            let palpite = Number(palpiteCampo.value);
+            if(contagem === 1){
+                numPalpites.textContent = "Palpites anteriores: ";
+            }
+
+            numPalpites.textContent += palpite + " ";
+
+            if(palpite === randNumero){
+                resultado.textContent = "Parabéns você acertou!";
+                resultado.style.backgroundColor = "green";
+                menorOuMaior.textContent = "";
+                gameOver();
+            } else if(contagem === 10){
+                resultado.textContent = "Sinto muito! Suas tentativas acabaram.";
+                gameOver();
+            } else{
+                resultado.textContent = "Errado! Tente novamente.";
+                resultado.style.backgroundColor = "red";
+                if(palpite < randNumero){
+                    menorOuMaior.textContent = "Mais alto!";
+                } else if(palpite > randNumero) {
+                    menorOuMaior.textContent = "Mais baixo!";
+                }
+            }
+            
+            contagem++;
+            palpiteCampo.value = "";
+            palpiteCampo.focus();
+        }
+        palpiteVerif.addEventListener('click', checarPalpite);
+
+        function gameOver(){
+            palpiteCampo.disabled = true;
+            palpiteVerif.disabled = true;
+            resetBotao = document.createElement('button');
+            resetBotao.textContent = "Iniciar novo jogo";
+            document.body.appendChild(resetBotao);
+            resetBotao.addEventListener('click', resetJogo);
+        }
+
+        function resetJogo(){
+            contagem = 1;
+
+            const resetParam = document.querySelectorAll('.resultParam p');
+            for(let i = 0; i < resetParam.length; i++){
+                resetParam[i].textContent = "";
+            }
+
+            resetBotao.parentNode.removeChild(resetBotao);
+
+            palpiteCampo.disabled = false;
+            palpiteVerif.disabled = false;
+            palpiteCampo.value = "";
+            palpiteCampo.focus();
+
+            resultado.style.backgroundColor = 'white';
+            randNumero = Math.floor(Math.random() * 100) + 1;
+        }
+    </script>
+</body>
+</html>
